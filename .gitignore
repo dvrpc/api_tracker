@@ -1,0 +1,6 @@
+ve/
+crawler/config.py
+__pycache__
+.pytest_cache
+files hit*
+
