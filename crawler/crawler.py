@@ -64,7 +64,7 @@ def walk_files(directory):
 
 if __name__ == "__main__":
 
-    base_dir = "dir_for_testing/"
+    base_dir = "/mnt/v"
     conn = pg.connect(PG_CREDS)
     try:
         with conn.cursor() as cur:

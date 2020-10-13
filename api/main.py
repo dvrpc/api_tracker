@@ -1,0 +1,70 @@
+"""API Tracker API. Check api_tracker database for specific urls.
+
+crawler/crawler.py in this repo populates the database.
+"""
+
+from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import psycopg2
+from pydantic import BaseModel
+
+from config import PSQL_CREDS
+
+
+class Message(BaseModel):
+    message: str
+
+
+app = FastAPI(
+    title="API Tracker API",
+    openapi_url="/api_tracker/v1/openapi.json",
+    docs_url="/api_tracker/v1/docs",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
+
+
+def get_conn():
+    """Connect to database, yield it, close it."""
+    conn = psycopg2.connect(PSQL_CREDS)
+    try:
+        yield conn
+    finally:
+        conn.close()
+
+
+@app.get(
+    "/api_tracker/v1/paths",
+    responses={500: {"model": Message, "description": "Internal Server Error"}},
+)
+def get_paths(url: str, conn=Depends(get_conn)):
+    """Return list of dictionaries of all records matching input url."""
+
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT * FROM matches WHERE string_hit LIKE %s", ["%{}%".format(url)])
+    except psycopg2.Error as e:
+        return JSONResponse(status_code=500, content={"message": "Database error: " + str(e)})
+
+    results = cur.fetchall()
+
+    if not results:
+        return []
+
+    paths = []
+    for row in results:
+        paths.append(
+            {
+                "path": row[0],
+                "line numer": row[1],
+            }
+        )
+
+    return paths
