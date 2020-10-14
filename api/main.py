@@ -49,7 +49,10 @@ def get_paths(url: str, conn=Depends(get_conn)):
 
     cur = conn.cursor()
     try:
-        cur.execute("SELECT * FROM matches WHERE string_hit LIKE %s", ["%{}%".format(url)])
+        cur.execute(
+            "SELECT DISTINCT file_path, line_number FROM matches WHERE string_hit LIKE %s",
+            ["%{}%".format(url)],
+        )
     except psycopg2.Error as e:
         return JSONResponse(status_code=500, content={"message": "Database error: " + str(e)})
 
@@ -63,7 +66,7 @@ def get_paths(url: str, conn=Depends(get_conn)):
         paths.append(
             {
                 "path": row[0],
-                "line numer": row[1],
+                "line number": row[1],
             }
         )
 
