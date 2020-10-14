@@ -9,12 +9,14 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS matches (
     file_path text NOT NULL,
     line_number integer NOT NULL,
-    string_hit text NOT NULL
+    string_hit text NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS errors (
     file_path text NOT NULL,
-    message text NOT NULL
+    message text NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 COMMIT;
