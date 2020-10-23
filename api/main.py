@@ -44,14 +44,14 @@ def get_conn():
     "/api_tracker/v1/paths",
     responses={500: {"model": Message, "description": "Internal Server Error"}},
 )
-def get_paths(url: str, conn=Depends(get_conn)):
+def get_paths(string: str, conn=Depends(get_conn)):
     """Return list of dictionaries of all records matching input url."""
 
     cur = conn.cursor()
     try:
         cur.execute(
-            "SELECT DISTINCT file_path, line_number FROM matches WHERE string_hit LIKE %s",
-            ["%{}%".format(url)],
+            "SELECT DISTINCT file_path, line_number, string_hit FROM matches WHERE string_hit LIKE %s",
+            ["%{}%".format(string)],
         )
     except psycopg2.Error as e:
         return JSONResponse(status_code=500, content={"message": "Database error: " + str(e)})
@@ -67,6 +67,7 @@ def get_paths(url: str, conn=Depends(get_conn)):
             {
                 "path": row[0],
                 "line number": row[1],
+                "line": row[2],
             }
         )
 
