@@ -2,6 +2,7 @@
 
 crawler/crawler.py in this repo populates the database.
 """
+from typing import List
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,7 +50,7 @@ def get_conn():
 @app.get(
     "/api_tracker/v1/paths",
     responses={500: {"model": Message, "description": "Internal Server Error"}},
-    response_model=Result,
+    response_model=List[Result],
 )
 def get_paths(string: str, conn=Depends(get_conn)):
     """Return list of dictionaries of all records containing submitted string."""
