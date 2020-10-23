@@ -7,13 +7,19 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import psycopg2
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from config import PSQL_CREDS
 
 
 class Message(BaseModel):
     message: str
+
+
+class Result(BaseModel):
+    path: str
+    line_number: int = Field(None, alias="line number")
+    line: str
 
 
 app = FastAPI(
@@ -43,9 +49,10 @@ def get_conn():
 @app.get(
     "/api_tracker/v1/paths",
     responses={500: {"model": Message, "description": "Internal Server Error"}},
+    response_model=Result,
 )
 def get_paths(string: str, conn=Depends(get_conn)):
-    """Return list of dictionaries of all records matching input url."""
+    """Return list of dictionaries of all records containing submitted string."""
 
     cur = conn.cursor()
     try:
