@@ -43,7 +43,7 @@ app.add_middleware(
 
 def get_conn():
     """Connect to database, yield it, close it."""
-    conn = psycopg2.connect(PSQL_CREDS)
+    conn = psycopg2.connect(PG_CREDS)
     try:
         yield conn
     finally:
