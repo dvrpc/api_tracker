@@ -1,7 +1,5 @@
 ve/
-crawler/config.py
-api/config.py
+config.py
 __pycache__
 .pytest_cache
 files hit*
-
