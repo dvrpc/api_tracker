@@ -12,7 +12,7 @@ TODO:
 from pathlib import Path
 import sys
 
-import psycopg2 as pg
+import psycopg
 
 sys.path.append("..")
 from config import PG_CREDS
@@ -68,25 +68,19 @@ def walk_files(directory):
 if __name__ == "__main__":
 
     base_dir = "/mnt/v"
-    conn = pg.connect(PG_CREDS)
-    try:
-        with conn.cursor() as cur:
-            files, errors = walk_files(base_dir)
-            cur = conn.cursor()
+    with psycopg.connect(PG_CREDS) as conn:
+        files, errors = walk_files(base_dir)
 
-            # wipe existing db tables
-            cur.execute("DELETE FROM matches")
-            cur.execute("DELETE FROM errors")
+        # wipe existing db tables
+        conn.execute("DELETE FROM matches")
+        conn.execute("DELETE FROM errors")
 
-            # insert files into db
-            for item in files:
-                cur.execute(
-                    "INSERT INTO matches (file_path, line_number, string_hit) VALUES (%s, %s, %s)",
-                    [*item],
-                )
+        # insert files into db
+        for item in files:
+            conn.execute(
+                "INSERT INTO matches (file_path, line_number, string_hit) VALUES (%s, %s, %s)",
+                [*item],
+            )
 
-            for error in errors:
-                cur.execute("INSERT INTO errors (file_path, message) VALUES (%s, %s)", [*error])
-        conn.commit()
-    finally:
-        conn.close()
+        for error in errors:
+            conn.execute("INSERT INTO errors (file_path, message) VALUES (%s, %s)", [*error])

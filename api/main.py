@@ -8,7 +8,7 @@ import sys
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import psycopg2
+import psycopg
 from pydantic import BaseModel, Field
 
 sys.path.append("..")
@@ -43,7 +43,7 @@ app.add_middleware(
 
 def get_conn():
     """Connect to database, yield it, close it."""
-    conn = psycopg2.connect(PG_CREDS)
+    conn = psycopg.connect(PG_CREDS)
     try:
         yield conn
     finally:
@@ -58,16 +58,14 @@ def get_conn():
 def get_paths(string: str, conn=Depends(get_conn)):
     """Return list of dictionaries of all records containing submitted string."""
 
-    cur = conn.cursor()
     try:
-        cur.execute(
-            "SELECT DISTINCT file_path, line_number, string_hit FROM matches WHERE string_hit LIKE %s",
-            ["%{}%".format(string)],
-        )
-    except psycopg2.Error as e:
+        with conn:
+            results = conn.execute(
+                "SELECT DISTINCT file_path, line_number, string_hit FROM matches WHERE string_hit LIKE %s",
+                ["%{}%".format(string)],
+            ).fetchall()
+    except psycopg.Error as e:
         return JSONResponse(status_code=500, content={"message": "Database error: " + str(e)})
-
-    results = cur.fetchall()
 
     if not results:
         return []
