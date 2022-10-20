@@ -10,11 +10,9 @@ TODO:
 """
 
 from pathlib import Path
-import sys
 
 import psycopg
 
-sys.path.append("..")
 from config import PG_CREDS
 
 

@@ -3,15 +3,12 @@
 crawler/crawler.py in this repo populates the database.
 """
 from typing import List
-import sys
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import psycopg
 from pydantic import BaseModel, Field
-
-sys.path.append("..")
 
 from config import PG_CREDS
 
