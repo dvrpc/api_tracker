@@ -15,6 +15,8 @@ sys.path.append("..")
 
 from config import PG_CREDS
 
+PATH = "/api/api-tracker/v1"
+
 
 class Message(BaseModel):
     message: str
@@ -28,8 +30,8 @@ class Result(BaseModel):
 
 app = FastAPI(
     title="API Tracker API",
-    openapi_url="/api_tracker/v1/openapi.json",
-    docs_url="/api_tracker/v1/docs",
+    openapi_url=PATH + "/openapi.json",
+    docs_url=PATH + "/docs",
 )
 
 app.add_middleware(
@@ -51,7 +53,7 @@ def get_conn():
 
 
 @app.get(
-    "/api_tracker/v1/paths",
+    PATH + "/paths",
     responses={500: {"model": Message, "description": "Internal Server Error"}},
     response_model=List[Result],
 )
