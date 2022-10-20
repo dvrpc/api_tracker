@@ -24,6 +24,7 @@ def search_file(f, path, files):
         "arcgis.dvrpc.org",
         "tiles.dvrpc.org",
         "cloud.dvrpc.org",
+        "linux3.dvrpc.org",
     ]
     for i, line in enumerate(f, start=1):
         for word in line.split():
