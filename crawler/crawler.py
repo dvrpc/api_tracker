@@ -25,6 +25,7 @@ def search_file(f, path, files):
         "tiles.dvrpc.org",
         "cloud.dvrpc.org",
         "linux3.dvrpc.org",
+        "providername",
     ]
     for i, line in enumerate(f, start=1):
         for word in line.split():
@@ -41,10 +42,21 @@ def walk_files(directory):
     """
     files = []
     errors = []
-    file_extensions = [".htm", ".html", ".js", ".json", ".py", ".R"]
+    file_extensions = [
+        ".htm",
+        ".html",
+        ".js",
+        ".json",
+        ".py",
+        ".R",
+        ".rs",
+        ".asp",
+        ".aspx",
+        ".config",
+    ]
     directory = Path(directory).resolve()
     for path in directory.glob("**/*"):
-        if path.suffix in file_extensions:
+        if path.suffix.lower() in file_extensions:
             print("Reading ", path)
             try:
                 with open(path, "r") as f:
