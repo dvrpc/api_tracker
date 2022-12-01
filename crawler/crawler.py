@@ -77,7 +77,7 @@ def walk_files(directory):
 
 if __name__ == "__main__":
 
-    base_dir = "/mnt/v"
+    base_dir = "/mnt/w"
     with psycopg.connect(PG_CREDS) as conn:
         files, errors = walk_files(base_dir)
 
