@@ -3,10 +3,6 @@ Search files with particular extensions on the Staging server for specific API e
 If the file contains the endpoint, include it in list that will be inserted into database.
 If an error occurred upon either opening or reading the file, track that filename and
 error and ?.
-
-TODO:
-    - figure out what to do with any errors in accessing a file and how to notify myself (Slack
-    Channel?) about them. (Right now only one file cannot be accessed due to permissions.)
 """
 
 from pathlib import Path
@@ -25,6 +21,7 @@ def search_file(f, path, files):
         "tiles.dvrpc.org",
         "cloud.dvrpc.org",
         "linux3.dvrpc.org",
+        "linux4.dvrpc.org",
     ]
     for i, line in enumerate(f, start=1):
         for word in line.split():
@@ -76,7 +73,6 @@ def walk_files(directory):
 
 
 if __name__ == "__main__":
-
     base_dir = "/mnt/w"
     with psycopg.connect(PG_CREDS) as conn:
         files, errors = walk_files(base_dir)
